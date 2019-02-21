@@ -1,9 +1,11 @@
 # HB_HC_MPI
 Templates and scripts for provisioning HB60rs and HC44rs virtual machines
 
-The template in the master branch will create a new VNet and deploy a single machine with a Public IP for ssh.
+The template in the existingVNet branch will deploy to an existing Vnet with no Public IP addresses.
+
+The machines can be built from either a markletplace CentOS 7.6 image, or a customized image.
+
 The OS will be CentOS 7.6
-The admin userID will be "hpcuser"
 
 There will not be any drivers or libraries installed.
 
