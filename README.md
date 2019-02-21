@@ -5,7 +5,7 @@ The template in the existingVNet branch will deploy to an existing Vnet with no 
 
 The machines can be built from either a markletplace CentOS 7.6 image, or a customized image.
 
-The OS will be CentOS 7.6
+The post deployment script will enable passwordless ssh between all the nodes.
 
 There will not be any drivers or libraries installed.
 
