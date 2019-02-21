@@ -10,6 +10,9 @@ adminPassword=${2}
 VMPREFIX=${3}
 NODECOUNT=${4}
 
+#give all the nodes time to complete spinning up
+sleep 60
+
 configure_ssh() {
     
     yum -y install sshpass
