@@ -5,7 +5,7 @@
 		"vmSku": {
 			"defaultValue": "Standard_HC44rs",
 			"allowedValues": [
-        "Standard_HB60rs",
+                "Standard_HB60rs",
 				"Standard_HC44rs"
 			],
 			"type": "String",
@@ -13,7 +13,7 @@
 				"description": "Which instance would you like to deploy to? Not all VMs are available in all regions"
 			}
 		},
-		"vmssName": {
+		"vmName": {
 			"maxLength": 10,
 			"type": "String",
 			"metadata": {
@@ -39,9 +39,9 @@
 	},
 	"variables": {
 		"resourceLocation": "[resourceGroup().location]",
-		"namingInfix": "[toLower(parameters('vmssName'))]",
+		"namingInfix": "[toLower(parameters('vmName'))]",
 		"jumpBoxName": "[concat(variables('namingInfix'),'jb')]",
-		"storageName": "[concat(variables('namingInfix'),'sa')]",
+		"storageName": "[concat(uniqueString(concat(resourceGroup().id, variables('namingInfix'), 'sa')))]",
 		"jumpBoxIPConfigName": "[concat(variables('jumpBoxName'), 'ipconfig')]",
 		"jumpBoxNicName": "[concat(variables('jumpBoxName'), 'nic')]",
 		"addressPrefix": "10.0.0.0/16",
@@ -154,7 +154,7 @@
 		},
 		{
 			"type": "Microsoft.Compute/virtualMachines",
-			"name": "[variables('jumpBoxName')]",
+			"name": "[parameters('vmName')]",
 			"apiVersion": "[variables('computeApiVersion')]",
 			"location": "[variables('resourceLocation')]",
 			"properties": {
@@ -162,7 +162,7 @@
 					"vmSize": "[parameters('vmSku')]"
 				},
 				"osProfile": {
-					"computerName": "[variables('jumpBoxName')]",
+					"computerName": "[parameters('vmName')]",
 					"adminUsername": "hpcuser",
 					"linuxConfiguration": {
 						"disablePasswordAuthentication": true,
