@@ -151,7 +151,7 @@
       "scriptsToDownload": [
         "https://raw.githubusercontent.com/grandparoach/HB_HC_MPI/existingVNet/setup.sh"
       ],
-      "commandToExecute": "[concat('bash setup.sh', parameters('adminUserName'), ' ', parameters('adminPassword'), ' ', parameters('vmPrefix'), ' ', parameters('NodeCount'))]"
+      "commandToExecute": "[concat('bash setup.sh', ' ', parameters('adminUserName'), ' ', parameters('adminPassword'), ' ', parameters('vmPrefix'), ' ', parameters('NodeCount'))]"
     },
 
     "AvailabilitySetSettings": {
