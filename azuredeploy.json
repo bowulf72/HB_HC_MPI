@@ -186,7 +186,7 @@
     },
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('NodeNicName'), padleft(copyindex(1), 2, '0'))]",
+      "name": "[concat(variables('NodeNicName'), copyindex(1))]",
       "location": "[variables('location')]",
       "apiVersion": "2016-03-30",
       "dependsOn": [ ],
@@ -211,12 +211,12 @@
 
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmPrefix'), padLeft(copyindex(1), 2, '0'))]",
+      "name": "[concat(parameters('vmPrefix'), copyindex(1))]",
       "location": "[variables('location')]",
       "apiVersion": "2016-04-30-preview",
       "dependsOn": [
         "[concat('Microsoft.Compute/availabilitySets/', variables('AvailabilitySetSettings').name)]",
-        "[concat('Microsoft.Network/networkinterfaces/', variables('NodeNicName'), padleft(copyindex(1), 2, '0'))]",
+        "[concat('Microsoft.Network/networkinterfaces/', variables('NodeNicName'), copyindex(1))]",
         "[concat('Microsoft.Storage/storageAccounts/', variables('DiagSAName'))]"
       ],
       "copy": {
@@ -231,7 +231,7 @@
           "vmSize": "[parameters('VMsku')]"
         },
         "osProfile": {
-          "computerName": "[concat(parameters('vmPrefix'), padLeft(copyindex(1), 2, '0'))]",
+          "computerName": "[concat(parameters('vmPrefix'), copyindex(1))]",
           "adminUsername": "[parameters('adminUserName')]",
           "adminPassword": "[parameters('adminPassword')]",
           "linuxConfiguration": "[variables('linuxConfiguration')]"
@@ -249,7 +249,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-               "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('NodeNicName'), padLeft(copyindex(1), 2, '0')))]"
+               "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('NodeNicName'), copyindex(1)))]"
             }
           ]
         },
@@ -264,10 +264,10 @@
     {
       "apiVersion": "2018-10-01",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmPrefix'), padLeft(copyindex(1), 2, '0'), '/init')]",
+      "name": "[concat(parameters('vmPrefix'), copyindex(1), '/init')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', concat(parameters('vmPrefix'), padLeft(copyindex(1), 2, '0')))]"
+        "[concat('Microsoft.Compute/virtualMachines/', concat(parameters('vmPrefix'), copyindex(1)))]"
       ],
       "copy": {
         "name": "computeNodeExtensionsCopy",
@@ -286,3 +286,4 @@
     }
   ]
 }
+
