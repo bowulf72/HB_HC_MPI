@@ -20,7 +20,7 @@ configure_ssh() {
     
     index=1    
     while [ $index -le $(($NODECOUNT)) ]; do
-        SSHCOMMAND="su -c 'sshpass -p $adminPassword ssh-copy-id -i /home/$adminUsername/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=2 $adminUsername@$VMPREFIX0$index -p 22' - $adminUsername"
+        SSHCOMMAND="su -c 'sshpass -p $adminPassword ssh-copy-id -i /home/$adminUsername/.ssh/id_rsa -o StrictHostKeyChecking=no -o ConnectTimeout=2 $adminUsername@$VMPREFIX$index -p 22' - $adminUsername"
         eval $SSHCOMMAND 
         let index++
     done
