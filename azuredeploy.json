@@ -153,7 +153,7 @@
 
     {
       "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmName'), copyindex(1))]",
+      "name": "[parameters('vmName')]",
       "location": "[variables('location')]",
       "apiVersion": "2016-04-30-preview",
       "dependsOn": [
