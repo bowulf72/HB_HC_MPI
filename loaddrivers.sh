@@ -10,4 +10,4 @@ yum -y install git
 git clone https://github.com/jithinjosepkl/azhpc-images.git
 cd azhpc-images/centos-7.6-hpc
 
-./setup_node.sh
+sh ./setup_node.sh
