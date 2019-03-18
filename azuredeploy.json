@@ -122,7 +122,7 @@
         "version": "latest"
       }
     },
-    "NodeimageReference_stock": "[variables('Images')['CentOS_7.6']]",
+    "NodeimageReference_marketplace": "[variables('Images')['CentOS_7.6']]",
     "NodeimageReference_custom": {"id": "[resourceId(parameters('CustomImageResourceGroup'), 'Microsoft.Compute/images', parameters('CustomImageName'))]"},
     "NodeimageReference": "[variables(concat('NodeimageReference_',parameters('imageSelection')))]",
 
