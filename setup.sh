@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+exit
 
 #disable_selinux
 sed -i 's/^SELINUX=.*/SELINUX=disabled/I' /etc/selinux/config
