@@ -1,4 +1,6 @@
 #!/bin/bash
+
+exit
 set -x
 
 #disable_selinux
