@@ -11,7 +11,7 @@
     },
     "VMsku": {
       "type": "string",
-      "defaultValue": "Standard_HC44rs",
+      "defaultValue": "Standard_HB60rs",
       "allowedValues": [
         "Standard_HC44rs",
         "Standard_HB60rs"
