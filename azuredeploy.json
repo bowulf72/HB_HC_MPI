@@ -82,13 +82,12 @@
         "storageApiVersion": "2018-07-01",
         "computeApiVersion": "2018-06-01",
         "autoscaleApiVersion": "2015-04-01",
-        "osType": {
+        "imageReference": {
             "publisher": "MicrosoftWindowsServer",
             "offer": "WindowsServer",
             "sku": "[parameters('windowsOSVersion')]",
             "version": "latest"
-          },
-          "imageReference": "[variables('osType')]",
+          },        
         "vnetID": "[resourceId(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVNetName'))]",
         "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]"
     },
@@ -112,11 +111,11 @@
                 "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
                 "virtualMachineProfile": {
                     "storageProfile": {
-                        "imageReference": "[parameters('image')]",
-                        "osDisk": {
-                            "createOption": "FromImage",
-                            "caching": "ReadWrite"
-                        }
+                      "osDisk": {
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                      },
+                      "imageReference": "[variables('imageReference')]"
                     },
                     "priority": "[parameters('priority')]",
                     "osProfile": {
