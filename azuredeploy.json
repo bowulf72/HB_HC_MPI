@@ -22,6 +22,9 @@
         "adminUsername": {
             "type": "string"
         },
+        "adminPassword": {
+            "type": "securestring"
+        },
         "instanceCount": {
             "type": "string"
         },
@@ -58,17 +61,20 @@
                 "description": "name of existing Virtual Network"
             }
         },
-        "image": {
-            "value": {
-                "sku": "2016-Datacenter",
-                "publisher": "MicrosoftWindowsServer",
-                "version": "latest",
-                "offer": "WindowsServer"
+        "windowsOSVersion": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "allowedValues": [
+              "2008-R2-SP1",
+              "2012-Datacenter",
+              "2012-R2-Datacenter",
+              "2016-Datacenter"
+            ],
+            "metadata": {
+              "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
             }
-        },
-        "adminPassword": {
-            "type": "securestring"
-        }        
+          }
+                
     },
     "variables": {
         "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
@@ -76,6 +82,13 @@
         "storageApiVersion": "2018-07-01",
         "computeApiVersion": "2018-06-01",
         "autoscaleApiVersion": "2015-04-01",
+        "osType": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },
+          "imageReference": "[variables('osType')]",
         "vnetID": "[resourceId(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVNetName'))]",
         "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]"
     },
