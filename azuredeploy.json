@@ -26,22 +26,16 @@
             "type": "string"
         },
         "singlePlacementGroup": {
-            "value": "true"
+            "type": "string",
+            "defaultValue": "true"
         },
         "priority": {
-            "value": "Regular"
-        },
-        "pipName": {
-            "value": ""
-        },
-        "pipLabel": {
-            "value": ""
+            "type": "string",
+            "defaultValue": "Regular"
         },
         "ipAllocationMethod": {
-            "value": "Static"
-        },
-        "skuType": {
-            "value": "Standard"
+            "type": "string",
+            "defaultValue": "static"
         },
         "existingVNetName": {
             "type": "string",
@@ -64,15 +58,6 @@
                 "description": "name of existing Virtual Network"
             }
         },
-        "enableAcceleratedNetworking": {
-            "value": "false"
-        },
-        "publicIpAddressPerInstance": {
-            "value": "false"
-        },
-        "upgradeMode": {
-            "value": "Manual"
-        },
         "image": {
             "value": {
                 "sku": "2016-Datacenter",
@@ -83,13 +68,7 @@
         },
         "adminPassword": {
             "type": "securestring"
-        },
-        "vnetName": {
-            "type": "string"
-        },
-        "subnetResourceGroup": {
-            "type": "string"
-        }
+        }        
     },
     "variables": {
         "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
@@ -98,7 +77,7 @@
         "computeApiVersion": "2018-06-01",
         "autoscaleApiVersion": "2015-04-01",
         "vnetID": "[resourceId(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVNetName'))]",
-        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]",
+        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]"
     },
     "resources": [
         {
@@ -115,8 +94,8 @@
             "properties": {
                 "overprovision": "true",
                 "upgradePolicy": {
-                    "mode": "[parameters('upgradeMode')]"
-                },
+                    "mode": "Automatic"
+                 },
                 "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
                 "virtualMachineProfile": {
                     "storageProfile": {
@@ -138,7 +117,6 @@
                                 "name": "[concat(parameters('vmssName'), 'Nic')]",
                                 "properties": {
                                     "primary": "true",
-                                    "enableAcceleratedNetworking": "[parameters('enableAcceleratedNetworking')]",
                                     "ipConfigurations": [
                                         {
                                             "name": "[concat(parameters('vmssName'), 'IpConfig')]",
