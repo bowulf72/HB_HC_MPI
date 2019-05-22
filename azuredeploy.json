@@ -1,289 +1,163 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "vmPrefix": {
-      "type": "string",
-      "metadata": {
-        "description": "Base string for naming resources (max length of 8)"
-      },
-      "maxLength": 8
-    },
-    "VMsku": {
-      "type": "string",
-      "defaultValue": "Standard_HC44rs",
-      "allowedValues": [
-        "Standard_HC44rs",
-        "Standard_HB60rs"
-      ],
-      "metadata": {
-        "description": "sku to use for the master VM"
-      }
-    },
-    "imageSelection": {
-      "type": "string",
-      "defaultValue": "custom",
-      "allowedValues": [
-        "marketplace",
-        "custom"
-      ],
-      "metadata": {
-        "description": "select whether to install from a custom or stock image"
-      }
-    },
-    "CustomImageResourceGroup": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Resource group of the customized disk image"
-      }
-    },
-    "CustomImageName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Name of the customized disk image"
-      }
-    },
-    "NodeCount": {
-      "type": "int",
-      "metadata": {
-        "description": "Number of VM instances"
-      },
-      "defaultValue": 10,
-      "maxValue": 100
-    },
-    "adminUserName": {
-      "type": "string",
-      "metadata": {
-        "description": "User name for the Virtual Machine."
-      }
-    },
-    "authenticationType": {
-      "type": "string",
-      "defaultValue": "password",
-      "allowedValues": [
-        "password",
-        "sshPublicKey"
-      ],
-      "metadata": {
-        "description": "Authentication type for the virtual machines"
-      }
-    },
-    "adminPassword": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Admin password for the virtual machines"
-      }
-    },
-    "sshPublicKey": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SSH public key that will be included on all nodes. The OpenSSH public key can be generated with tools like ssh-keygen on Linux or OS X."
-      }
-    },
-    "existingVNetName": {
-        "type": "string",
-        "defaultValue": "",
-        "metadata": {
-          "description": "name of existing Virtual Network"
-      }
-    },
-    "existingVNetResourceGroup": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "name of Resource Group for existing Virtual Network"
-      }
-    },
-    "existingSubnetName": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "name of existing Virtual Network"
-      }
-    }
-  },
-  "variables": {
-    "location": "[resourceGroup().location]",
-    "longNamingInfix": "[toLower(parameters('vmPrefix'))]",
-    "newStorageAccountSuffix": "[concat(variables('longNamingInfix'), 'sa')]",
-    "vnetID": "[resourceId(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVNetName'))]",
-    "SubnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]",
-    "DiagSAName": "[concat(uniqueString(concat(resourceGroup().id, variables('newStorageAccountSuffix'))), 'diag')]",
-    "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
-    "Images": {
-      "CentOS_7.6": {
-        "publisher": "OpenLogic",
-        "offer": "CentOS",
-        "sku": "7.6",
-        "version": "latest"
-      }
-    },
-    "NodeimageReference_marketplace": "[variables('Images')['CentOS_7.6']]",
-    "NodeimageReference_custom": {"id": "[resourceId(parameters('CustomImageResourceGroup'), 'Microsoft.Compute/images', parameters('CustomImageName'))]"},
-    "NodeimageReference": "[variables(concat('NodeimageReference_',parameters('imageSelection')))]",
-
-    "linuxConfiguration_sshPublicKey": {
-      "disablePasswordAuthentication": "true",
-      "ssh": {
-        "publicKeys": [
-          {
-            "path": "[variables('sshKeyPath')]",
-            "keyData": "[parameters('sshPublicKey')]"
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "location": {
+            "type": "string"
+        },
+        "vmssName": {
+            "type": "string"
+        },
+        "vmSku": {
+            "type": "string",
+            "defaultValue": "Standard_HC44rs",
+            "allowedValues": [
+                "Standard_HC44rs",
+                "Standard_HB60rs"
+                ],
+            "metadata": {
+            "description": "sku to use for the master VM"
+            }
+        },
+        "adminUsername": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "instanceCount": {
+            "type": "string"
+        },
+        "singlePlacementGroup": {
+            "type": "string",
+            "defaultValue": "true"
+        },
+        "priority": {
+            "type": "string",
+            "defaultValue": "Regular"
+        },
+        "ipAllocationMethod": {
+            "type": "string",
+            "defaultValue": "static"
+        },
+        "existingVNetName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "name of existing Virtual Network"
+                }
+            },
+        "existingVNetResourceGroup": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "name of Resource Group for existing Virtual Network"
+            }
+            },
+        "existingSubnetName": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+                "description": "name of existing Virtual Network"
+            }
+        },
+        "windowsOSVersion": {
+            "type": "string",
+            "defaultValue": "2016-Datacenter",
+            "allowedValues": [
+              "2008-R2-SP1",
+              "2012-Datacenter",
+              "2012-R2-Datacenter",
+              "2016-Datacenter"
+            ],
+            "metadata": {
+              "description": "The Windows version for the VM. This will pick a fully patched image of this given Windows version. Allowed values: 2008-R2-SP1, 2012-Datacenter, 2012-R2-Datacenter."
+            }
           }
-        ]
-      }
+                
     },
-    "linuxConfiguration_password": { },
-    "linuxConfiguration": "[variables(concat('linuxConfiguration_',parameters('authenticationType')))]",
-    
-    
-    "storageAccountType": "Standard_LRS",
-    
-    
-    "vmnamingInfix": "[toLower(take(concat(parameters('vmPrefix'), uniqueString(resourceGroup().id)), 9))]",
-    "NodenicName": "[concat(variables('vmnamingInfix'), 'nic')]",
-    
-    "vmScripts": {
-      "scriptsToDownload": [
-        "https://raw.githubusercontent.com/grandparoach/HB_HC_MPI/existingVNet/setup.sh"
-      ],
-      "commandToExecute": "[concat('bash setup.sh', ' ', parameters('adminUserName'), ' ', parameters('adminPassword'), ' ', parameters('vmPrefix'), ' ', parameters('NodeCount'))]"
+    "variables": {
+        "namingInfix": "[toLower(substring(concat(parameters('vmssName'), uniqueString(resourceGroup().id)), 0, 9))]",
+        "networkApiVersion": "2018-01-01",
+        "storageApiVersion": "2018-07-01",
+        "computeApiVersion": "2018-06-01",
+        "autoscaleApiVersion": "2015-04-01",
+        "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "[parameters('windowsOSVersion')]",
+            "version": "latest"
+          },        
+        "vnetID": "[resourceId(parameters('existingVNetResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVNetName'))]",
+        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingSubnetName'))]"
     },
-
-    "AvailabilitySetSettings": {
-      "name": "ComputeNodeAvailabilitySet",
-      "faultDomainCount": "2",
-      "updateDomainCount": "5"
-    }
-  },  
-
-  "resources": [
-    {
-      "type": "Microsoft.Storage/storageAccounts",
-      "name": "[variables('DiagSAName')]",
-      "location": "[variables('location')]",
-      "apiVersion": "2015-06-15",
-      "properties": {
-        "accountType": "Standard_LRS"
-      }
-    },
-    {
-      "apiVersion": "2018-10-01",
-      "type": "Microsoft.Compute/availabilitySets",
-         "sku": {
-            "name": "Aligned"
-         },
-      "name": "[variables('AvailabilitySetSettings').name]",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "platformFaultDomainCount": "[variables('AvailabilitySetSettings').faultDomainCount]",
-        "platformUpdateDomainCount": "[variables('AvailabilitySetSettings').updateDomainCount]"
-      }
-    },
-    {
-      "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(variables('NodeNicName'), copyindex(1))]",
-      "location": "[variables('location')]",
-      "apiVersion": "2016-03-30",
-      "dependsOn": [ ],
-      "copy": {
-        "name": "NodeNicCopy",
-        "count": "[parameters('NodeCount')]"
-      },
-      "properties": {
-        "ipConfigurations": [
-          {
-            "name": "NodeIP",
+    "resources": [
+        {
+            "name": "[parameters('vmssName')]",
+            "type": "Microsoft.Compute/virtualMachineScaleSets",
+            "apiVersion": "[variables('computeApiVersion')]",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "sku": {
+                "name": "[parameters('vmSku')]",
+                "tier": "Standard",
+                "capacity": "[int(parameters('instanceCount'))]"
+            },
             "properties": {
-              "privateIPAllocationMethod": "Dynamic", 
-              "subnet": {
-                "id": "[variables('SubnetRef')]"
-              }
+                "overprovision": "true",
+                "upgradePolicy": {
+                    "mode": "Automatic"
+                 },
+                "singlePlacementGroup": "[parameters('singlePlacementGroup')]",
+                "virtualMachineProfile": {
+                    "storageProfile": {
+                      "osDisk": {
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage"
+                      },
+                      "imageReference": "[variables('imageReference')]"
+                    },
+                    "priority": "[parameters('priority')]",
+                    "osProfile": {
+                        "computerNamePrefix": "[variables('namingInfix')]",
+                        "adminUsername": "[parameters('adminUsername')]",
+                        "adminPassword": "[parameters('adminPassword')]"
+                    },
+                    "networkProfile": {
+                        "networkInterfaceConfigurations": [
+                            {
+                                "name": "[concat(parameters('vmssName'), 'Nic')]",
+                                "properties": {
+                                    "primary": "true",
+                                    "ipConfigurations": [
+                                        {
+                                            "name": "[concat(parameters('vmssName'), 'IpConfig')]",
+                                            "properties": {
+                                                "subnet": {
+                                                    "id": "[variables('subnetId')]"
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    },       
+                    "extensionProfile": {
+                        "extensions": [
+                          {
+                            "name": "InfiniBandDriverWindows",
+                            "publisher": "Microsoft.HpcCompute",
+                            "typeHandlerVersion": "1.1.0.0",
+                            "type": "InfiniBandDriverWindows",
+                            "autoUpgradeMinorVersion": false,
+                            "location": "[parameters('location')]"
+                           }
+                        ]
+                        
+                    }
+                }
             }
-          }
-        ]
-      }
-    },
-
-    {
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[concat(parameters('vmPrefix'), copyindex(1))]",
-      "location": "[variables('location')]",
-      "apiVersion": "2016-04-30-preview",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/availabilitySets/', variables('AvailabilitySetSettings').name)]",
-        "[concat('Microsoft.Network/networkinterfaces/', variables('NodeNicName'), copyindex(1))]",
-        "[concat('Microsoft.Storage/storageAccounts/', variables('DiagSAName'))]"
-      ],
-      "copy": {
-        "name": "NodeVmCopy",
-        "count": "[parameters('NodeCount')]"
-      },
-      "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('AvailabilitySetSettings').name)]"
-        },
-        "hardwareProfile": {
-          "vmSize": "[parameters('VMsku')]"
-        },
-        "osProfile": {
-          "computerName": "[concat(parameters('vmPrefix'), copyindex(1))]",
-          "adminUsername": "[parameters('adminUserName')]",
-          "adminPassword": "[parameters('adminPassword')]",
-          "linuxConfiguration": "[variables('linuxConfiguration')]"
-        },
-        "storageProfile": {
-          "imageReference": "[variables('NodeimageReference')]",
-          "osDisk": {
-            "caching": "ReadOnly",
-            "createOption": "FromImage",
-             "managedDisk": {
-                "storageAccountType": "Premium_LRS"
-             }
-          } 
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-               "id": "[resourceId('Microsoft.Network/networkInterfaces', concat(variables('NodeNicName'), copyindex(1)))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": "true",
-           "storageUri": "[concat('http://',variables('DiagSAName'),'.blob.core.windows.net')]"
-          }
         }
-      }
-    },
-    {
-      "apiVersion": "2018-10-01",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('vmPrefix'), copyindex(1), '/init')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', concat(parameters('vmPrefix'), copyindex(1)))]"
-      ],
-      "copy": {
-        "name": "computeNodeExtensionsCopy",
-        "count": "[parameters('NodeCount')]"
-      },
-      "properties": {
-         "publisher": "Microsoft.Azure.Extensions",
-        "type": "CustomScript",
-        "typeHandlerVersion": "2.0",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "fileUris": "[variables('vmScripts').scriptsToDownload]",
-          "commandToExecute": "[variables('vmScripts').commandToExecute]"
-        }
-      }
-    }
-  ]
+    ]
 }
-
