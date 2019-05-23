@@ -150,7 +150,7 @@
                             "properties": {
                               "publisher": "Microsoft.HpcCompute",
                               "settings": {},
-                              "typeHandlerVersion": "1.1.0.0",
+                              "typeHandlerVersion": "1.1",
                               "autoUpgradeMinorVersion": true,
                               "type": "InfiniBandDriverWindows"
                             }
