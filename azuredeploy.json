@@ -142,20 +142,22 @@
                                 }
                             }
                         ]
-                    },       
+                    },
                     "extensionProfile": {
                         "extensions": [
                           {
                             "name": "InfiniBandDriverWindows",
-                            "publisher": "Microsoft.HpcCompute",
-                            "typeHandlerVersion": "1.1.0.0",
-                            "type": "InfiniBandDriverWindows",
-                            "autoUpgradeMinorVersion": false,
-                            "location": "[parameters('location')]"
-                           }
+                            "properties": {
+                              "publisher": "Microsoft.HpcCompute",
+                              "settings": {},
+                              "typeHandlerVersion": "1.1.0.0",
+                              "autoUpgradeMinorVersion": true,
+                              "type": "InfiniBandDriverWindows"
+                            }
+                          }                          
                         ]
-                        
-                    }
+                      }       
+                    
                 }
             }
         }
