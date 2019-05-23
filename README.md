@@ -8,5 +8,5 @@ The machines can be built from either a markletplace Windows 2016 image, or a cu
 The post deployment script will enable Infiniband driver install between all the nodes.
 
 
-[![Click to deploy template on Azure](http://azuredeploy.net/deploybutton.png "Click to deploy template on Azure")](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fgrandparoach%2FHB_HC_MPI%2FexistingVNet%2Fazuredeploy.json)  
+[![Click to deploy template on Azure](http://azuredeploy.net/deploybutton.png "Click to deploy template on Azure")](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fbowulf72%2FHB_HC_MPI%2FexistingVNet-Windows%2Fazuredeploy.json)  
 
